@@ -1,22 +1,36 @@
 package ru.undframe;
 
-import java.util.List;
+import ru.undframe.field.Field;
 
 public class CSVColumn {
 
-    private String head;
-    private List<String> values;
+    private Coordinate head;
+    private String name;
+    private Field field;
 
-    public CSVColumn(String head, List<String> values) {
+    public CSVColumn(String name,Field field,Coordinate head) {
+        this.name = name;
         this.head = head;
-        this.values = values;
+        this.field = field;
     }
 
-    public String getHead() {
+    public Coordinate getHead() {
         return head;
     }
 
-    public List<String> getValues() {
-        return values;
+    public String getName() {
+        return name;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    @Override
+    public String toString() {
+        return "CSVColumn{" +
+                "head=" + head +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
