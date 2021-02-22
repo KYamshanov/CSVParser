@@ -12,8 +12,40 @@ public class CSVParserTest {
         Parser parser = CSVParser.getInstance();
         parser.launch("ru.undframe");
         CSVObject<TestTable> csvObject = parser.getCSVObject(TestTable.class);
-        assertEquals(csvObject.getObjects().get(0), new TestTable("a0", "b0", 1,new MultiplayObject("vasya",5)));
-        assertEquals(csvObject.getObjects().get(1), new TestTable("a1", "b1", -1,new MultiplayObject("iggron",15)));
+        assertEquals(csvObject.getObjects().get(0), new TestTable("a0", "b0", 1,new MultiplayObject("vasya",500)));
+        assertNotEquals(csvObject.getObjects().get(0), new TestTable("a0youlox", "b0", 1,new MultiplayObject("vasya",100)));
+        assertEquals(csvObject.getObjects().get(1), new TestTable("a1", "b1", -1,new MultiplayObject("igron",1500)));
+        assertEquals(csvObject.getObjects().size(), 21);
+
+
+    }
+
+    @Test
+    public void testCustomEnum(){
+
+        Parser parser = CSVParser.getInstance();
+        parser.launch("ru.undframe");
+
+        testSpeed("Custom",() -> {
+            for (BankPersonTest value : BankPersonTest.values()) {
+                System.out.println(value);
+            }
+        });
+        testSpeed("Default",() -> {
+            for (BanPersonEnum value : BanPersonEnum.values()) {
+                System.out.println(value);
+            }
+        });
+
+    }
+
+
+    public static void testSpeed(String mrk,Runnable runnable){
+        long start = System.nanoTime();
+        runnable.run();
+        long stop = System.nanoTime();
+
+        System.out.println("["+mrk+ "] ACTION execute with "+ (stop-start));
 
     }
 

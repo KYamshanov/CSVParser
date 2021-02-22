@@ -1,14 +1,13 @@
-package ru.undframe.field;
+package ru.undframe;
+
+import ru.undframe.field.Field;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-
 @Retention(RetentionPolicy.RUNTIME)
-public @interface FieldParser {
+public @interface Parsable {
 
-    Class[] parseClasses();
-
-    int prority() default 1;
+    Class<? extends Field> parser();
 
 }

@@ -3,7 +3,7 @@ package ru.undframe;
 import java.util.Objects;
 
 @CSVData(url = "https://docs.google.com/spreadsheets/d/1Pg6hx6uf_eBjoMy4olOVbUU13Z1XkeOAV0VYoxJnpL4/export?format=csv")
-public class TestTable {
+public class TestTable{
 
 
     @Column(head= "A1",main = true)
@@ -14,6 +14,7 @@ public class TestTable {
     private int size = -1;
 
     @Column(head = "E2", size = 2)
+    @Parsable(parser = MultiplayField2.class)
     private MultiplayObject multiplayObject;
 
     public TestTable(String name, String age, int size, MultiplayObject multiplayObject) {
@@ -45,12 +46,13 @@ public class TestTable {
         TestTable testTable = (TestTable) o;
         return size == testTable.size &&
                 Objects.equals(name, testTable.name) &&
-                Objects.equals(age, testTable.age);
+                Objects.equals(age, testTable.age) &&
+                Objects.equals(multiplayObject, testTable.multiplayObject);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age, size);
+        return Objects.hash(name, age, size, multiplayObject);
     }
 
     @Override
@@ -59,6 +61,7 @@ public class TestTable {
                 "name='" + name + '\'' +
                 ", age='" + age + '\'' +
                 ", size=" + size +
+                ", multiplayObject=" + multiplayObject +
                 '}';
     }
 }

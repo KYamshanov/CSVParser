@@ -1,32 +1,50 @@
 package ru.undframe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ArrayTable {
 
-    private List<List<String>> data = new ArrayList<>();
+    private List<List<String>> data;
     private String separator;
 
     public ArrayTable(List<String> lines, String separator) {
 
         this.separator = separator;
 
-        for (int y = 0; y < lines.size(); y++) {
-            String[] objects = lines.get(y).split(separator);
-            for (int x = 0; x < objects.length; x++) {
-                List<String> tableColumn = x >= data.size() ? new ArrayList<>() : data.get(x);
-                if (y >= tableColumn.size())
-                    tableColumn.add(y, objects[x]);
-                else
-                    tableColumn.set(y, objects[x]);
 
-                if (x >= data.size())
-                    data.add(x, tableColumn);
-                else
-                    data.set(x, tableColumn);
-            }
+        List<List<String>> xyObjects = new ArrayList<>();
+
+        for (String line : lines) {
+            xyObjects.add(Arrays.asList(
+                    line.split(separator)));
         }
+
+        int maxLengthColumn = 0;
+        for (List<String> strings : xyObjects) {
+            maxLengthColumn = Math.max(strings.size(), maxLengthColumn);
+        }
+
+        List<List<String>> rotateArray = new ArrayList<>();
+
+
+        for (int i = 0; i < maxLengthColumn; i++) {
+            List<String> newColumn = new ArrayList<>();
+            for (List<String> strings : xyObjects) {
+                if(i>=strings.size())
+                    newColumn.add("");
+                else{
+                    newColumn.add(strings.get(i));
+                }
+            }
+            rotateArray.add(newColumn);
+
+        }
+        data = rotateArray;
+
+        xyObjects.clear();
+
     }
 
     public String getValue(int x, int y) {

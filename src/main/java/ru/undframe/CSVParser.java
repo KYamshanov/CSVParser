@@ -17,7 +17,14 @@ public class CSVParser implements Parser {
     public void launch(String pac) {
         Reflections reflections = new Reflections(pac);
         try {
-            Set<Class<?>> fieldParsers = reflections.getTypesAnnotatedWith(FieldParser.class);
+            List<Class<?>> fieldParsers = new ArrayList<>(reflections.getTypesAnnotatedWith(FieldParser.class));
+
+            fieldParsers.sort((o1, o2) -> {
+                FieldParser o1Annotation = o1.getAnnotation(FieldParser.class);
+                FieldParser o2Annotation = o2.getAnnotation(FieldParser.class);
+                return Integer.compare(o1Annotation.prority(), o2Annotation.prority());
+            });
+
             for (Class<?> fieldParser : fieldParsers) {
                 if (Arrays.asList(fieldParser.getInterfaces()).contains(ru.undframe.field.Field.class)) {
 
@@ -30,7 +37,14 @@ public class CSVParser implements Parser {
                 }
             }
 
-            Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(CSVData.class);
+            List<Class<?>> typesAnnotatedWith = new ArrayList<>(reflections.getTypesAnnotatedWith(CSVData.class));
+
+            typesAnnotatedWith.sort((o1, o2) -> {
+                CSVData o1Annotation = o1.getAnnotation(CSVData.class);
+                CSVData o2Annotation = o2.getAnnotation(CSVData.class);
+                return Integer.compare(o1Annotation.prority(), o2Annotation.prority());
+            });
+
             for (Class<?> aClass : typesAnnotatedWith) {
                 for (Annotation declaredAnnotation : aClass.getDeclaredAnnotations()) {
                     if (declaredAnnotation instanceof CSVData) {
@@ -45,9 +59,12 @@ public class CSVParser implements Parser {
         }
     }
 
+    private static Parser parser;
 
     public static Parser getInstance() {
-        return new CSVParser();
+        if(parser==null)
+            parser = new CSVParser();
+        return parser;
     }
 
     void registerCSV(Class c, CSVObject csv) {
@@ -81,15 +98,21 @@ public class CSVParser implements Parser {
                     for (Annotation annotation : field.getDeclaredAnnotations()) {
                         if (annotation instanceof Column) {
                             Column column = (Column) annotation;
+                            Parsable parsable = field.getAnnotation(Parsable.class);
                             Coordinate head = new Coordinate(column.head());
                             field.setAccessible(true);
                             Object defaultValue = field.get(instanceClass);
                             field.setAccessible(false);
-                            CSVColumn csvColumn = new CSVColumn(field.getName(), getParser(field.getType()), head, column.size(), column.main(), defaultValue);
+                            CSVColumn csvColumn = new CSVColumn(field.getName(), parsable != null ? parsable.parser().newInstance() : getParser(field.getType()), head, column.size(), column.main(), defaultValue);
                             csvColumns.add(csvColumn);
                         }
                     }
                 }
+
+                InitializationObject initMethod = null;
+                if(instanceClass instanceof InitializationObject)
+                    initMethod = (InitializationObject)instanceClass;
+
                 csvObject = new CSVObject(data.url(), csvColumns, aClass);
             }
         }

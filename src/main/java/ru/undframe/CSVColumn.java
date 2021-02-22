@@ -3,6 +3,7 @@ package ru.undframe;
 import ru.undframe.field.Field;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class CSVColumn {
 
@@ -13,6 +14,7 @@ public class CSVColumn {
     private boolean main;
     private Object defaultValue;
 
+
     public CSVColumn(String name,Field field,Coordinate head,int usageColumn,boolean main,Object defaultValue) {
         this.name = name;
         this.head = head;
@@ -21,6 +23,7 @@ public class CSVColumn {
         this.main = main;
         this.defaultValue = defaultValue;
     }
+
 
     public Coordinate getHead() {
         return head;

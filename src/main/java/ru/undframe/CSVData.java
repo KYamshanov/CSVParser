@@ -7,5 +7,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface CSVData {
 
     String url();
-
+    int prority() default  1;
 }

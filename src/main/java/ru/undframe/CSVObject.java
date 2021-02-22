@@ -14,23 +14,35 @@ public class CSVObject<T> {
     private ArrayTable data;
     private Class<T> instanceClass;
     private List<T> objects;
+    private InitializationObject initMethod;
 
     public CSVObject(String url, List<CSVColumn> csvColumns, Class<T> instanceClass) {
+
+        System.out.println("Download "+url);
+
         this.url = url;
         this.list = csvColumns;
         this.instanceClass = instanceClass;
 
         this.data = getData();
         this.objects = getValues();
+        System.out.println("Data load successfully");
     }
 
     public List<T> getObjects() {
         return objects;
     }
 
+
+
     void refreshData() {
+        System.out.println("Download "+url);
+
         this.data = getData();
         this.objects = getValues();
+
+        System.out.println("Data refresh successfully");
+
     }
 
     private List<T> getValues() {
@@ -40,15 +52,19 @@ public class CSVObject<T> {
         try {
             int countObjects = Integer.MAX_VALUE;
             for (CSVColumn csvColumn : list) {
+                List<String> column = data.getColumn(csvColumn.getHead().getX(), csvColumn.getHead());
 
-                int columnItems = data.getColumn(csvColumn.getHead().getX(), csvColumn.getHead()).size();
 
+                int columnItems;
+
+                for (columnItems = 0; columnItems < column.size(); columnItems++) {
+                    if(column.get(columnItems).isEmpty()) break;
+                }
                 if (csvColumn.isMain()) {
                     countObjects = columnItems;
                     break;
                 }
-
-                countObjects = Math.max(countObjects, columnItems);
+                countObjects = Math.min(countObjects, columnItems);
             }
 
             for (int id = 0; id < countObjects; id++) {
@@ -70,6 +86,10 @@ public class CSVObject<T> {
                     f.set(t, dataValues.size()==0 ? csvColumn.getDefaultValue() :csvColumn.getField().parse(dataValues.toArray(new String[]{})));
                     f.setAccessible(false);
                 }
+
+                if(t instanceof InitializationObject)
+                    ((InitializationObject)t).init();
+
                 values.add(t);
             }
         } catch (InstantiationException | IllegalAccessException | NoSuchFieldException e) {
