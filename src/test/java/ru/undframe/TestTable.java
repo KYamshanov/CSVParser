@@ -1,6 +1,6 @@
 package ru.undframe;
 
-@CSVData
+@CSVData(url = "fdfsdffd")
 public class TestTable {
 
 
