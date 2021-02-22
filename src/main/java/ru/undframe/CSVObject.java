@@ -15,7 +15,7 @@ public class CSVObject<T> {
     private Class<T> instanceClass;
     private List<T> objects;
 
-    public CSVObject(String url,List<CSVColumn> csvColumns, Class<T> instanceClass) {
+    public CSVObject(String url, List<CSVColumn> csvColumns, Class<T> instanceClass) {
         this.url = url;
         this.list = csvColumns;
         this.instanceClass = instanceClass;
@@ -28,7 +28,7 @@ public class CSVObject<T> {
         return objects;
     }
 
-    void refreshData(){
+    void refreshData() {
         this.data = getData();
         this.objects = getValues();
     }
@@ -38,18 +38,36 @@ public class CSVObject<T> {
         List<T> values = new ArrayList<>();
 
         try {
-            int countObjects = 0;
+            int countObjects = Integer.MAX_VALUE;
             for (CSVColumn csvColumn : list) {
-                countObjects = Math.max(countObjects, data.getColumn(csvColumn.getHead().getX(), csvColumn.getHead()).size());
+
+                int columnItems = data.getColumn(csvColumn.getHead().getX(), csvColumn.getHead()).size();
+
+                if (csvColumn.isMain()) {
+                    countObjects = columnItems;
+                    break;
+                }
+
+                countObjects = Math.max(countObjects, columnItems);
             }
 
             for (int id = 0; id < countObjects; id++) {
                 T t = instanceClass.newInstance();
                 for (CSVColumn csvColumn : list) {
-                    Coordinate coordinate = csvColumn.getHead().clone().add(0, id);
+
+                    List<String> dataValues = new ArrayList<>();
+
+                    for (int x = 0; x < csvColumn.getUsageColumn(); x++) {
+                        Coordinate coordinate = csvColumn.getHead().clone().add(x, id);
+                        String value = this.data.getValue(coordinate);
+                        if (!value.isEmpty())
+                            dataValues.add(value);
+                    }
+
+
                     Field f = t.getClass().getDeclaredField(csvColumn.getName());
                     f.setAccessible(true);
-                    f.set(t, csvColumn.getField().parse(data.getValue(coordinate)));
+                    f.set(t, dataValues.size()==0 ? csvColumn.getDefaultValue() :csvColumn.getField().parse(dataValues.toArray(new String[]{})));
                     f.setAccessible(false);
                 }
                 values.add(t);

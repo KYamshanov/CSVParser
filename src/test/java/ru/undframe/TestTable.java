@@ -6,17 +6,21 @@ import java.util.Objects;
 public class TestTable {
 
 
-    @Column(head= "A1")
+    @Column(head= "A1",main = true)
     private String name;
     @Column(head = "B1")
     private String age;
     @Column(head = "C1")
-    private int size;
+    private int size = -1;
 
-    public TestTable(String name, String age, int size) {
+    @Column(head = "E2", size = 2)
+    private MultiplayObject multiplayObject;
+
+    public TestTable(String name, String age, int size, MultiplayObject multiplayObject) {
         this.name = name;
         this.age = age;
         this.size = size;
+        this.multiplayObject = multiplayObject;
     }
 
     public TestTable() {
