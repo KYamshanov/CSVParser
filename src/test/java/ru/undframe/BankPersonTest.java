@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.Objects;
 
 @Getter
-@CSVData(url = "https://docs.google.com/spreadsheets/d/1Pg6hx6uf_eBjoMy4olOVbUU13Z1XkeOAV0VYoxJnpL4/export?format=csv")
+@CSVData(url = "https://docs.google.com/spreadsheets/d/1Pg6hx6uf_eBjoMy4olOVbUU13Z1XkeOAV0VYoxJnpL4/export?format=csv",priority = 5)
 public class BankPersonTest {
 
 

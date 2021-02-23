@@ -10,20 +10,28 @@ public class CSVColumn {
     private boolean main;
     private Object defaultValue;
     private boolean linkField;
+    private boolean constantPosition;
 
+    private ArrayTable fromTable= null;
 
     public CSVColumn(String name, Field field,
                      Position head,
                      boolean main, Object defaultValue,
-                     boolean linkField) {
+                     boolean linkField,
+                     boolean constantPosition) {
         this.name = name;
         this.head = head;
         this.field = field;
         this.main = main;
         this.defaultValue = defaultValue;
         this.linkField = linkField;
+        this.constantPosition = constantPosition;
     }
 
+
+    public boolean isConstantPosition() {
+        return constantPosition;
+    }
 
     public Position getHead() {
         return head;
@@ -35,6 +43,14 @@ public class CSVColumn {
 
     public Field getField() {
         return field;
+    }
+
+    public ArrayTable getFromTable() {
+        return fromTable;
+    }
+
+    public void setFromTable(ArrayTable fromTable) {
+        this.fromTable = fromTable;
     }
 
     public int getUsageColumn() {
@@ -60,4 +76,5 @@ public class CSVColumn {
                 ", name='" + name + '\'' +
                 '}';
     }
+
 }

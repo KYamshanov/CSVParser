@@ -9,4 +9,5 @@ public @interface Column {
     String head();
     boolean main() default false;
     boolean link() default false;
+    boolean constantPosition() default false;
 }

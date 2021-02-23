@@ -25,8 +25,11 @@ public class TestTable {
     @Column(head = "I2", link = true)
     private Matrix data;
 
+    @Column(head = "H3",constantPosition = true)
+    @DataLoader(fromCSV = TestTable2.class)
+    private int count;
 
-    public TestTable(String name, String age, int size, MultiplayObject multiplayObject, String hash, long leatherHat, Matrix matrix) {
+    public TestTable(String name, String age, int size, MultiplayObject multiplayObject, String hash, long leatherHat, Matrix matrix,int count) {
         this.name = name;
         this.age = age;
         this.size = size;
@@ -34,6 +37,7 @@ public class TestTable {
         this.hash = hash;
         this.leatherHat = leatherHat;
         this.data = matrix;
+        this.count = count;
     }
 
     public TestTable() {
@@ -51,6 +55,7 @@ public class TestTable {
         return size;
     }
 
+
     @Override
     public String toString() {
         return "TestTable{" +
@@ -61,6 +66,7 @@ public class TestTable {
                 ", hash='" + hash + '\'' +
                 ", leatherHat=" + leatherHat +
                 ", data=" + data +
+                ", count=" + count +
                 '}';
     }
 
@@ -71,6 +77,7 @@ public class TestTable {
         TestTable testTable = (TestTable) o;
         return size == testTable.size &&
                 leatherHat == testTable.leatherHat &&
+                count == testTable.count &&
                 Objects.equals(name, testTable.name) &&
                 Objects.equals(age, testTable.age) &&
                 Objects.equals(multiplayObject, testTable.multiplayObject) &&
@@ -80,6 +87,6 @@ public class TestTable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age, size, multiplayObject, hash, leatherHat, data);
+        return Objects.hash(name, age, size, multiplayObject, hash, leatherHat, data, count);
     }
 }

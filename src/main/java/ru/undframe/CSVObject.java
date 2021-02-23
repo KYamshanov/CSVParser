@@ -24,6 +24,10 @@ public class CSVObject<T> {
         return objects;
     }
 
+    public ArrayTable getData(){
+        return data;
+    }
+
     public Object getRedableCSV() {
         return redableCSV;
     }
@@ -40,7 +44,10 @@ public class CSVObject<T> {
         try {
             int countObjects = Integer.MAX_VALUE;
             for (CSVColumn csvColumn : list) {
-                List<String> column = data.getColumn(csvColumn.getHead().getX(), csvColumn.getHead());
+                ArrayTable fromTable  = csvColumn.getFromTable()==null ? data: csvColumn.getFromTable();
+
+
+                List<String> column = fromTable.getColumn(csvColumn.getHead().getX(), csvColumn.getHead());
 
 
                 int columnItems;
@@ -59,11 +66,17 @@ public class CSVObject<T> {
                 T t = instanceClass.newInstance();
                 for (CSVColumn csvColumn : list) {
 
+                    ArrayTable fromTable  = csvColumn.getFromTable()==null ? data: csvColumn.getFromTable();
+
+
                     List<String> dataValues = new ArrayList<>();
 
                     for (int x = 0; x < csvColumn.getUsageColumn(); x++) {
-                        Position coordinate = csvColumn.getHead().clone().add(x, id);
-                        String value = this.data.getValue(coordinate);
+
+
+                        Position coordinate = csvColumn.isConstantPosition()? csvColumn.getHead().clone() :
+                                csvColumn.getHead().clone().add(x, id);
+                        String value = fromTable.getValue(coordinate);
                         if (!value.isEmpty())
                             dataValues.add(value);
                     }
@@ -86,7 +99,7 @@ public class CSVObject<T> {
                             for (int y = coordinate.getY(), i = 0; y < coordinate.getYMax() + 1; y++, i++) {
                                 String[] line = new String[coordinate.getDeltaX() + 1];
                                 for (int x = coordinate.getX(), i1 = 0; x < coordinate.getXMax() + 1; x++, i1++) {
-                                    line[i1] = data.getValue(x, y-1);
+                                    line[i1] = fromTable.getValue(x, y-1);
                                 }
                                 valuesLink[i] = line;
                             }

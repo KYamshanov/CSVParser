@@ -30,7 +30,7 @@ public class CSVParser implements Parser {
 
             for (Class<?> readerClass : readers) {
                 if (Arrays.asList(readerClass.getInterfaces()).contains(ru.undframe.Reader.class)) {
-                    Reader reader= (Reader) readerClass.newInstance();
+                    Reader reader = (Reader) readerClass.newInstance();
                     CSVReader csvReader = readerClass.getDeclaredAnnotation(CSVReader.class);
                     for (Class aClass : csvReader.supportClasses()) {
                         csvReaders.put(aClass, reader);
@@ -63,7 +63,7 @@ public class CSVParser implements Parser {
             typesAnnotatedWith.sort((o1, o2) -> {
                 CSVData o1Annotation = o1.getAnnotation(CSVData.class);
                 CSVData o2Annotation = o2.getAnnotation(CSVData.class);
-                return Integer.compare(o1Annotation.prority(), o2Annotation.prority());
+                return Integer.compare(o1Annotation.priority(), o2Annotation.priority());
             });
 
             for (Class<?> aClass : typesAnnotatedWith) {
@@ -108,7 +108,7 @@ public class CSVParser implements Parser {
         }
     }
 
-    public Reader getReaderCSV(Class c){
+    public Reader getReaderCSV(Class c) {
         return csvReaders.get(c);
     }
 
@@ -140,16 +140,27 @@ public class CSVParser implements Parser {
                             CSVColumn csvColumn = new CSVColumn(
                                     field.getName(),
                                     parsable != null ? parsable.parser().newInstance() : getParser(field.getType()),
-                                    head,
-                                    column.main(),
-                                    defaultValue,
-                                    column.link()
+                                    head, column.main(),
+                                    defaultValue, column.link(),
+                                    column.constantPosition()
                             );
+
+                            DataLoader dataLoader = field.getAnnotation(DataLoader.class);
+                            if (dataLoader != null) {
+                                CSVObject fromCSV = csvObjects.getOrDefault(dataLoader.fromCSV(), null);
+
+
+
+                                if (fromCSV != null) {
+                                    csvColumn.setFromTable(fromCSV.getData());
+                                } else
+                                    throw new IllegalArgumentException("Please change priority load " + dataLoader.fromCSV() + " to a less");
+                            }
                             csvColumns.add(csvColumn);
                         }
                     }
                 }
-                csvObject = new CSVObject(data.url(),csvTables.computeIfAbsent(data.url(), this::getData), csvColumns, aClass);
+                csvObject = new CSVObject(data.url(), csvTables.computeIfAbsent(data.url(), this::getData), csvColumns, aClass);
             }
         }
 
