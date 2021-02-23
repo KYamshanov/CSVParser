@@ -4,8 +4,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ProprityTable {
+public @interface CSVReader {
 
-    int priority() default 1;
+    Class[] supportClasses();
+    int prority() default 1;
 
 }

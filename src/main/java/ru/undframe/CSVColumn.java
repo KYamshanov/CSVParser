@@ -2,9 +2,6 @@ package ru.undframe;
 
 import ru.undframe.field.Field;
 
-import java.util.Objects;
-import java.util.Optional;
-
 public class CSVColumn {
 
     private Coordinate head;
@@ -13,15 +10,20 @@ public class CSVColumn {
     private Field field;
     private boolean main;
     private Object defaultValue;
+    private boolean linkField;
 
 
-    public CSVColumn(String name,Field field,Coordinate head,int usageColumn,boolean main,Object defaultValue) {
+    public CSVColumn(String name,Field field,
+                     Coordinate head,int usageColumn,
+                     boolean main,Object defaultValue,
+                     boolean linkField) {
         this.name = name;
         this.head = head;
         this.field = field;
         this.usageColumn = usageColumn;
         this.main = main;
         this.defaultValue = defaultValue;
+        this.linkField = linkField;
     }
 
 
@@ -47,6 +49,10 @@ public class CSVColumn {
 
     public Object getDefaultValue() {
         return defaultValue;
+    }
+
+    public boolean isLinkField() {
+        return linkField;
     }
 
     @Override

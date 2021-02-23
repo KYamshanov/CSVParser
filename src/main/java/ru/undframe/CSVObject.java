@@ -1,48 +1,36 @@
 package ru.undframe;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class CSVObject<T> {
 
-    private String url;
+    private Object redableCSV;
     private List<CSVColumn> list;
     private ArrayTable data;
     private Class<T> instanceClass;
     private List<T> objects;
-    private InitializationObject initMethod;
 
-    public CSVObject(String url, List<CSVColumn> csvColumns, Class<T> instanceClass) {
-
-        System.out.println("Download "+url);
-
-        this.url = url;
+    public CSVObject(Object redableCSV, ArrayTable table, List<CSVColumn> csvColumns, Class<T> instanceClass) {
+        this.redableCSV = redableCSV;
         this.list = csvColumns;
+        this.data = table;
         this.instanceClass = instanceClass;
-
-        this.data = getData();
         this.objects = getValues();
-        System.out.println("Data load successfully");
     }
 
     public List<T> getObjects() {
         return objects;
     }
 
+    public Object getRedableCSV() {
+        return redableCSV;
+    }
 
-
-    void refreshData() {
-        System.out.println("Download "+url);
-
-        this.data = getData();
+    void refreshData(ArrayTable table) {
+        this.data = table;
         this.objects = getValues();
-
-        System.out.println("Data refresh successfully");
-
     }
 
     private List<T> getValues() {
@@ -58,7 +46,7 @@ public class CSVObject<T> {
                 int columnItems;
 
                 for (columnItems = 0; columnItems < column.size(); columnItems++) {
-                    if(column.get(columnItems).isEmpty()) break;
+                    if (column.get(columnItems).isEmpty()) break;
                 }
                 if (csvColumn.isMain()) {
                     countObjects = columnItems;
@@ -81,14 +69,41 @@ public class CSVObject<T> {
                     }
 
 
+                    Object result = null;
+
+
+                    if (dataValues.size() == 0)
+                        result = csvColumn.getDefaultValue();
+                    else {
+                        if (!csvColumn.isLinkField()) {
+                            result = csvColumn.getField().parse(new String[][]{dataValues.toArray(new String[]{})});
+                        } else {
+                            Coordinate coordinate = Coordinate.of(dataValues.get(0));
+
+
+                            String[][] valuesLink = new String[coordinate.deltaY() + 1][coordinate.deltaX() + 1];
+
+                            for (int y = coordinate.getY(), i = 0; y < coordinate.getYMax() + 1; y++, i++) {
+                                String[] line = new String[coordinate.deltaX() + 1];
+                                for (int x = coordinate.getX(), i1 = 0; x < coordinate.getXMax() + 1; x++, i1++) {
+                                    line[i1] = data.getValue(x, y-1);
+                                }
+                                valuesLink[i] = line;
+                            }
+                            result = csvColumn.getField().parse(valuesLink);
+
+
+                        }
+                    }
+
                     Field f = t.getClass().getDeclaredField(csvColumn.getName());
                     f.setAccessible(true);
-                    f.set(t, dataValues.size()==0 ? csvColumn.getDefaultValue() :csvColumn.getField().parse(dataValues.toArray(new String[]{})));
+                    f.set(t, result);
                     f.setAccessible(false);
                 }
 
-                if(t instanceof InitializationObject)
-                    ((InitializationObject)t).init();
+                if (t instanceof InitializationObject)
+                    ((InitializationObject) t).init();
 
                 values.add(t);
             }
@@ -97,22 +112,4 @@ public class CSVObject<T> {
         }
         return values;
     }
-
-    private ArrayTable getData() {
-        try {
-            URL url = new URL(this.url);
-            Scanner s = new Scanner(url.openStream());
-            List<String> lines = new ArrayList<>();
-            while (s.hasNext())
-                lines.add(s.nextLine());
-
-            return new ArrayTable(lines, ",");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        throw new IllegalArgumentException();
-    }
-
 }

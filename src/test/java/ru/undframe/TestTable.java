@@ -3,25 +3,37 @@ package ru.undframe;
 import java.util.Objects;
 
 @CSVData(url = "https://docs.google.com/spreadsheets/d/1Pg6hx6uf_eBjoMy4olOVbUU13Z1XkeOAV0VYoxJnpL4/export?format=csv")
-public class TestTable{
+public class TestTable {
 
 
-    @Column(head= "A1",main = true)
+    @Column(head = "A1", main = true)
     private String name;
     @Column(head = "B1")
     private String age;
     @Column(head = "C1")
     private int size = -1;
 
-    @Column(head = "E2", size = 2)
+    @Column(head = "E2:F2")
     @Parsable(parser = MultiplayField2.class)
     private MultiplayObject multiplayObject;
 
-    public TestTable(String name, String age, int size, MultiplayObject multiplayObject) {
+    @Column(head = "AJ1")
+    private String hash;
+
+    @Column(head = "G2", link = true)
+    private long leatherHat;
+    @Column(head = "I2", link = true)
+    private Matrix data;
+
+
+    public TestTable(String name, String age, int size, MultiplayObject multiplayObject, String hash, long leatherHat, Matrix matrix) {
         this.name = name;
         this.age = age;
         this.size = size;
         this.multiplayObject = multiplayObject;
+        this.hash = hash;
+        this.leatherHat = leatherHat;
+        this.data = matrix;
     }
 
     public TestTable() {
@@ -40,28 +52,34 @@ public class TestTable{
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TestTable testTable = (TestTable) o;
-        return size == testTable.size &&
-                Objects.equals(name, testTable.name) &&
-                Objects.equals(age, testTable.age) &&
-                Objects.equals(multiplayObject, testTable.multiplayObject);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, age, size, multiplayObject);
-    }
-
-    @Override
     public String toString() {
         return "TestTable{" +
                 "name='" + name + '\'' +
                 ", age='" + age + '\'' +
                 ", size=" + size +
                 ", multiplayObject=" + multiplayObject +
+                ", hash='" + hash + '\'' +
+                ", leatherHat=" + leatherHat +
+                ", data=" + data +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TestTable testTable = (TestTable) o;
+        return size == testTable.size &&
+                leatherHat == testTable.leatherHat &&
+                Objects.equals(name, testTable.name) &&
+                Objects.equals(age, testTable.age) &&
+                Objects.equals(multiplayObject, testTable.multiplayObject) &&
+                Objects.equals(hash, testTable.hash) &&
+                Objects.equals(data, testTable.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age, size, multiplayObject, hash, leatherHat, data);
     }
 }

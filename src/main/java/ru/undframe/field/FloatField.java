@@ -4,14 +4,7 @@ package ru.undframe.field;
 public class FloatField implements Field<Float> {
 
     @Override
-    public Float parse(String[] s) {
-        float result = Float.parseFloat(s[0]);
-
-        for (int i = 1; i < s.length; i++) {
-            String addValue = s[i];
-            result += Float.parseFloat(addValue);
-        }
-
-        return result;
+    public Float parse(String[][] s) {
+        return Float.parseFloat(s[0][0]);
     }
 }

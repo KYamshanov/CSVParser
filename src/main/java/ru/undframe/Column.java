@@ -7,6 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Column {
 
     String head();
-    int size() default 1;
     boolean main() default false;
+    boolean link() default false;
 }
