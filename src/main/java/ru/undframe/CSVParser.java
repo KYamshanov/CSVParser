@@ -133,7 +133,7 @@ public class CSVParser implements Parser {
                         if (annotation instanceof Column) {
                             Column column = (Column) annotation;
                             Parsable parsable = field.getAnnotation(Parsable.class);
-                            Coordinate head = Coordinate.of(column.head());
+                            Position head = Position.of(column.head());
                             field.setAccessible(true);
                             Object defaultValue = field.get(instanceClass);
                             field.setAccessible(false);
@@ -141,7 +141,6 @@ public class CSVParser implements Parser {
                                     field.getName(),
                                     parsable != null ? parsable.parser().newInstance() : getParser(field.getType()),
                                     head,
-                                    head.deltaX() + 1,
                                     column.main(),
                                     defaultValue,
                                     column.link()

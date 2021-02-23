@@ -62,7 +62,7 @@ public class CSVObject<T> {
                     List<String> dataValues = new ArrayList<>();
 
                     for (int x = 0; x < csvColumn.getUsageColumn(); x++) {
-                        Coordinate coordinate = csvColumn.getHead().clone().add(x, id);
+                        Position coordinate = csvColumn.getHead().clone().add(x, id);
                         String value = this.data.getValue(coordinate);
                         if (!value.isEmpty())
                             dataValues.add(value);
@@ -78,13 +78,13 @@ public class CSVObject<T> {
                         if (!csvColumn.isLinkField()) {
                             result = csvColumn.getField().parse(new String[][]{dataValues.toArray(new String[]{})});
                         } else {
-                            Coordinate coordinate = Coordinate.of(dataValues.get(0));
+                            Position coordinate = Position.of(dataValues.get(0));
 
 
-                            String[][] valuesLink = new String[coordinate.deltaY() + 1][coordinate.deltaX() + 1];
+                            String[][] valuesLink = new String[coordinate.getDeltaY() + 1][coordinate.getDeltaX() + 1];
 
                             for (int y = coordinate.getY(), i = 0; y < coordinate.getYMax() + 1; y++, i++) {
-                                String[] line = new String[coordinate.deltaX() + 1];
+                                String[] line = new String[coordinate.getDeltaX() + 1];
                                 for (int x = coordinate.getX(), i1 = 0; x < coordinate.getXMax() + 1; x++, i1++) {
                                     line[i1] = data.getValue(x, y-1);
                                 }

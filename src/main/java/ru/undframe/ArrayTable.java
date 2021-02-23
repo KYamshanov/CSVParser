@@ -63,11 +63,11 @@ public class ArrayTable {
                 '}';
     }
 
-    public String getValue(Coordinate coordinate) {
+    public String getValue(Position coordinate) {
         return getValue(coordinate.getX(), coordinate.getY()-1);
     }
 
-    public List<String> getColumn(int x,Coordinate head) {
+    public List<String> getColumn(int x, Position head) {
         List<String> column = data.get(x);
         return column.subList(head.getY()-1,column.size());
     }

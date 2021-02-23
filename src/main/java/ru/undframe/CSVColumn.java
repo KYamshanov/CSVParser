@@ -4,8 +4,7 @@ import ru.undframe.field.Field;
 
 public class CSVColumn {
 
-    private Coordinate head;
-    private int usageColumn;
+    private Position head;
     private String name;
     private Field field;
     private boolean main;
@@ -13,21 +12,20 @@ public class CSVColumn {
     private boolean linkField;
 
 
-    public CSVColumn(String name,Field field,
-                     Coordinate head,int usageColumn,
-                     boolean main,Object defaultValue,
+    public CSVColumn(String name, Field field,
+                     Position head,
+                     boolean main, Object defaultValue,
                      boolean linkField) {
         this.name = name;
         this.head = head;
         this.field = field;
-        this.usageColumn = usageColumn;
         this.main = main;
         this.defaultValue = defaultValue;
         this.linkField = linkField;
     }
 
 
-    public Coordinate getHead() {
+    public Position getHead() {
         return head;
     }
 
@@ -40,7 +38,7 @@ public class CSVColumn {
     }
 
     public int getUsageColumn() {
-        return usageColumn;
+        return head.getDeltaX()+1;
     }
 
     public boolean isMain() {

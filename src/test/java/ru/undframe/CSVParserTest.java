@@ -16,8 +16,6 @@ public class CSVParserTest {
         assertNotEquals(csvObject.getObjects().get(0), new TestTable("a0youlox", "b0", 1,new MultiplayObject("vasya",100),"A",90,new Matrix("heath","age",90,15)));
         assertEquals(csvObject.getObjects().get(1), new TestTable("a1", "b1", -1,new MultiplayObject("igron",1500),"B",95,new Matrix("heath","age",90,15)));
         assertEquals(csvObject.getObjects().size(), 21,95);
-
-
     }
 
     @Test
