@@ -1,21 +1,29 @@
 package ru.undframe;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class CSVObject<T> {
+public class CSVTable<T> {
 
-    private Object redableCSV;
+    private Object parameter;
     private List<CSVColumn> list;
     private ArrayTable data;
     private Class<T> instanceClass;
     private List<T> objects;
+    private DataReader reader;
 
-    public CSVObject(Object redableCSV, ArrayTable table, List<CSVColumn> csvColumns, Class<T> instanceClass) {
-        this.redableCSV = redableCSV;
+    public CSVTable(Object parameter, DataReader reader, List<CSVColumn> csvColumns, Class<T> instanceClass) throws IOException {
+
+        Objects.requireNonNull(parameter);
+        Objects.requireNonNull(reader);
+
+        this.parameter = parameter;
         this.list = csvColumns;
-        this.data = table;
+        this.reader = reader;
+        this.data = reader.read(this.parameter);
         this.instanceClass = instanceClass;
         this.objects = getValues();
     }
@@ -24,16 +32,16 @@ public class CSVObject<T> {
         return objects;
     }
 
-    public ArrayTable getData(){
+    public ArrayTable getData() {
         return data;
     }
 
-    public Object getRedableCSV() {
-        return redableCSV;
+    public Object getParameter() {
+        return parameter;
     }
 
-    void refreshData(ArrayTable table) {
-        this.data = table;
+    void refreshData() throws IOException {
+        this.data = reader.read(parameter);
         this.objects = getValues();
     }
 
@@ -44,7 +52,7 @@ public class CSVObject<T> {
         try {
             int countObjects = Integer.MAX_VALUE;
             for (CSVColumn csvColumn : list) {
-                ArrayTable fromTable  = csvColumn.getFromTable()==null ? data: csvColumn.getFromTable();
+                ArrayTable fromTable = csvColumn.getFromTable() == null ? data : csvColumn.getFromTable();
 
 
                 List<String> column = fromTable.getColumn(csvColumn.getHead().getX(), csvColumn.getHead());
@@ -66,7 +74,7 @@ public class CSVObject<T> {
                 T t = instanceClass.newInstance();
                 for (CSVColumn csvColumn : list) {
 
-                    ArrayTable fromTable  = csvColumn.getFromTable()==null ? data: csvColumn.getFromTable();
+                    ArrayTable fromTable = csvColumn.getFromTable() == null ? data : csvColumn.getFromTable();
 
 
                     List<String> dataValues = new ArrayList<>();
@@ -74,7 +82,7 @@ public class CSVObject<T> {
                     for (int x = 0; x < csvColumn.getUsageColumn(); x++) {
 
 
-                        Position coordinate = csvColumn.isConstantPosition()? csvColumn.getHead().clone() :
+                        Position coordinate = csvColumn.isConstantPosition() ? csvColumn.getHead().clone() :
                                 csvColumn.getHead().clone().add(x, id);
                         String value = fromTable.getValue(coordinate);
                         if (!value.isEmpty())
@@ -99,12 +107,11 @@ public class CSVObject<T> {
                             for (int y = coordinate.getY(), i = 0; y < coordinate.getYMax() + 1; y++, i++) {
                                 String[] line = new String[coordinate.getDeltaX() + 1];
                                 for (int x = coordinate.getX(), i1 = 0; x < coordinate.getXMax() + 1; x++, i1++) {
-                                    line[i1] = fromTable.getValue(x, y-1);
+                                    line[i1] = fromTable.getValue(x, y - 1);
                                 }
                                 valuesLink[i] = line;
                             }
                             result = csvColumn.getField().parse(valuesLink);
-
 
                         }
                     }

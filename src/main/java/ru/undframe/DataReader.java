@@ -2,7 +2,7 @@ package ru.undframe;
 
 import java.io.IOException;
 
-public interface Reader<T> {
+public interface DataReader<T> {
 
     ArrayTable read(T t) throws IOException;
 

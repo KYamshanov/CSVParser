@@ -3,10 +3,9 @@ package ru.undframe;
 
 import lombok.Getter;
 
-import java.util.Objects;
-
 @Getter
-@CSVData(url = "https://docs.google.com/spreadsheets/d/1Pg6hx6uf_eBjoMy4olOVbUU13Z1XkeOAV0VYoxJnpL4/export?format=csv",priority = 5)
+@CSVData(priority = 5)
+@CSVGetterFromLink(link= "https://docs.google.com/spreadsheets/d/1Pg6hx6uf_eBjoMy4olOVbUU13Z1XkeOAV0VYoxJnpL4/export?format=csv")
 public class BankPersonTest {
 
 
@@ -36,7 +35,7 @@ public class BankPersonTest {
     }
 
 
-    private static CSVObject<BankPersonTest> csvObject;
+    private static CSVTable<BankPersonTest> csvObject;
     public static BankPersonTest[] values() {
         loadCSVObject();
 

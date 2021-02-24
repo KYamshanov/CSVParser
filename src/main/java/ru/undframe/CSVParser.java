@@ -6,19 +6,20 @@ import ru.undframe.field.FieldParser;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class CSVParser implements Parser {
 
-    private Map<Class, CSVObject> csvObjects = new HashMap<>();
+    private Map<Class, CSVTable> csvObjects = new HashMap<>();
     private Map<Object, ArrayTable> csvTables = new HashMap<>();
     private Map<Class, ru.undframe.field.Field> fieldParsers = new HashMap<>();
-    private Map<Class, Reader> csvReaders = new HashMap<>();
+    private Map<Class, DataReader> csvReaders = new HashMap<>();
 
     @Override
-    public void launch(String pac) {
+    public void launch(String pac) throws IllegalAccessException, InstantiationException, IOException {
         Reflections reflections = new Reflections(pac);
-        try {
+
 
             List<Class<?>> readers = new ArrayList<>(reflections.getTypesAnnotatedWith(CSVReader.class));
 
@@ -29,8 +30,8 @@ public class CSVParser implements Parser {
             });
 
             for (Class<?> readerClass : readers) {
-                if (Arrays.asList(readerClass.getInterfaces()).contains(ru.undframe.Reader.class)) {
-                    Reader reader = (Reader) readerClass.newInstance();
+                if (Arrays.asList(readerClass.getInterfaces()).contains(DataReader.class)) {
+                    DataReader reader = (DataReader) readerClass.newInstance();
                     CSVReader csvReader = readerClass.getDeclaredAnnotation(CSVReader.class);
                     for (Class aClass : csvReader.supportClasses()) {
                         csvReaders.put(aClass, reader);
@@ -54,7 +55,6 @@ public class CSVParser implements Parser {
                     for (Class aClass : parses.parseClasses()) {
                         this.fieldParsers.put(aClass, field);
                     }
-
                 }
             }
 
@@ -69,15 +69,12 @@ public class CSVParser implements Parser {
             for (Class<?> aClass : typesAnnotatedWith) {
                 for (Annotation declaredAnnotation : aClass.getDeclaredAnnotations()) {
                     if (declaredAnnotation instanceof CSVData) {
-                        CSVObject csvObject = instanceCSVObject(aClass);
+                        CSVTable csvObject = instanceCSVObject(aClass);
                         registerCSV(aClass, csvObject);
                     }
                 }
             }
 
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     private static Parser parser;
@@ -88,37 +85,34 @@ public class CSVParser implements Parser {
         return parser;
     }
 
-    void registerCSV(Class c, CSVObject csv) {
+    void registerCSV(Class c, CSVTable csv) {
         csvObjects.put(c, csv);
     }
 
     @Override
-    public void refreshCSVs() {
+    public void refreshCSVs() throws IOException {
 
         List<Object> objects = new ArrayList<>(csvTables.keySet());
 
         csvTables.clear();
 
-        for (Object url : objects) {
-            getData(url);
-        }
 
-        for (CSVObject csv : csvObjects.values()) {
-            csv.refreshData(getData(csv.getRedableCSV()));
+        for (CSVTable csv : csvObjects.values()) {
+            csv.refreshData();
         }
     }
 
-    public Reader getReaderCSV(Class c) {
+    public DataReader getReaderCSV(Class c) {
         return csvReaders.get(c);
     }
 
     @Override
-    public CSVObject getCSVObject(Class c) {
+    public CSVTable getCSVObject(Class c) {
         return csvObjects.get(c);
     }
 
-    private CSVObject instanceCSVObject(Class aClass) throws IllegalAccessException, InstantiationException {
-        CSVObject csvObject = null;
+    private CSVTable instanceCSVObject(Class aClass) throws IllegalAccessException, InstantiationException, IOException {
+        CSVTable csvObject = null;
 
         Object instanceClass = aClass.newInstance();
 
@@ -147,7 +141,7 @@ public class CSVParser implements Parser {
 
                             DataLoader dataLoader = field.getAnnotation(DataLoader.class);
                             if (dataLoader != null) {
-                                CSVObject fromCSV = csvObjects.getOrDefault(dataLoader.fromCSV(), null);
+                                CSVTable fromCSV = csvObjects.getOrDefault(dataLoader.fromCSV(), null);
 
 
 
@@ -160,7 +154,32 @@ public class CSVParser implements Parser {
                         }
                     }
                 }
-                csvObject = new CSVObject(data.url(), csvTables.computeIfAbsent(data.url(), this::getData), csvColumns, aClass);
+
+                Object csvGetter = null;
+                DataReader dataReader = null;
+
+
+                CSVDataReader dataReaderInfo= (CSVDataReader) aClass.getDeclaredAnnotation(CSVDataReader.class);
+
+                if(instanceClass instanceof CSVSupplier) {
+                    csvGetter = ((CSVSupplier) instanceClass).getCSV();
+                }else{
+
+                    CSVGetterFromLink linkInfo = (CSVGetterFromLink) aClass.getDeclaredAnnotation(CSVGetterFromLink.class);
+                    if(linkInfo!=null)
+                        csvGetter = linkInfo.link();
+
+                }
+
+                if(dataReaderInfo!=null)
+                    dataReader = dataReaderInfo.reader().newInstance();
+                else if (csvGetter != null) {
+                    dataReader = csvReaders.getOrDefault(csvGetter.getClass(), null);
+                }
+
+                csvObject = new CSVTable(csvGetter,
+                        dataReader,
+                        csvColumns, aClass);
             }
         }
 
@@ -179,7 +198,7 @@ public class CSVParser implements Parser {
         throw new IllegalArgumentException("Class " + c.getName() + " don`t support");
     }
 
-    private ArrayTable getData(Object o) {
+   /* private ArrayTable getData(Object o) {
         return csvTables.computeIfAbsent(o, u -> {
             try {
                 return getReaderCSV(o.getClass()).read(u);
@@ -188,6 +207,6 @@ public class CSVParser implements Parser {
             }
             throw new IllegalArgumentException();
         });
-    }
+    }*/
 
 }

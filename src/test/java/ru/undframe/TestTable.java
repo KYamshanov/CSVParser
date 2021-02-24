@@ -2,7 +2,8 @@ package ru.undframe;
 
 import java.util.Objects;
 
-@CSVData(url = "https://docs.google.com/spreadsheets/d/1Pg6hx6uf_eBjoMy4olOVbUU13Z1XkeOAV0VYoxJnpL4/export?format=csv")
+@CSVData()
+@CSVGetterFromLink(link= "https://docs.google.com/spreadsheets/d/1Pg6hx6uf_eBjoMy4olOVbUU13Z1XkeOAV0VYoxJnpL4/export?format=csv")
 public class TestTable {
 
 
