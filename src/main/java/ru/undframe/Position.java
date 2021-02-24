@@ -38,7 +38,7 @@ public interface Position {
         if (x < 0)
             throw new IllegalArgumentException();
         y = Integer.parseInt(columnName.substring(skipCharacters));
-        return new Coordinate(x, y);
+        return new Coordinate(x, y-1);
     }
 
 
@@ -56,4 +56,6 @@ public interface Position {
     Position add(int x, int y);
 
     String[][] getValuesFromTable(CSVTable table);
+
+    Position addRelatively(int x, int y);
 }

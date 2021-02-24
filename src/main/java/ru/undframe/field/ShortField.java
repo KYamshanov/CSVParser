@@ -1,9 +1,9 @@
 package ru.undframe.field;
 
 @FieldParser(parseClasses = {Short.class, short.class})
-public class ShortField implements Field<Short> {
+public class ShortField implements PrimitiveField<Short> {
     @Override
-    public Short parse(String[][] s) {
-        return Short.parseShort(s[0][0]);
+    public Short parse(String s) {
+        return Short.parseShort(s);
     }
 }

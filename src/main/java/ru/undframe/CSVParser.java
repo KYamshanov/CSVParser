@@ -2,6 +2,7 @@ package ru.undframe;
 
 import org.reflections.Reflections;
 import ru.undframe.field.FieldParser;
+import ru.undframe.field.PrimitiveField;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -47,9 +48,10 @@ public class CSVParser implements Parser {
             });
 
             for (Class<?> fieldParser : fieldParsers) {
-                if (Arrays.asList(fieldParser.getInterfaces()).contains(ru.undframe.field.Field.class)) {
 
-                    ru.undframe.field.Field<?> field = (ru.undframe.field.Field) fieldParser.newInstance();
+                Object fieldObject = fieldParser.newInstance();
+                if(fieldObject instanceof ru.undframe.field.Field){
+                    ru.undframe.field.Field field = (ru.undframe.field.Field) fieldObject;
                     FieldParser parses = fieldParser.getDeclaredAnnotation(FieldParser.class);
                     for (Class aClass : parses.parseClasses()) {
                         this.fieldParsers.put(aClass, field);
@@ -117,8 +119,6 @@ public class CSVParser implements Parser {
 
         for (Annotation declaredAnnotation : aClass.getDeclaredAnnotations()) {
             if (declaredAnnotation instanceof CSVData) {
-                CSVData data = (CSVData) declaredAnnotation;
-
                 List<CSVColumn> csvColumns = new ArrayList<>();
 
                 for (Field field : aClass.getDeclaredFields()) {
@@ -130,9 +130,11 @@ public class CSVParser implements Parser {
                             field.setAccessible(true);
                             Object defaultValue = field.get(instanceClass);
                             field.setAccessible(false);
+
+
                             CSVColumn csvColumn = new CSVColumn(
                                     field.getName(),
-                                    parsable != null ? parsable.parser().newInstance() : getParser(field.getType()),
+                                    parsable != null ? parsable.parser().newInstance() : getParser(field),
                                     head, column.main(),
                                     defaultValue, column.link(),
                                     column.constantPosition()
@@ -186,15 +188,15 @@ public class CSVParser implements Parser {
     }
 
     @Override
-    public void registerParser(Class c, ru.undframe.field.Field field) {
+    public void registerParser(Class c, PrimitiveField field) {
         this.fieldParsers.put(c, field);
     }
 
-    private ru.undframe.field.Field getParser(Class c) {
-        if (fieldParsers.containsKey(c))
-            return fieldParsers.get(c);
+    private ru.undframe.field.Field getParser(Field field) {
+        if (fieldParsers.containsKey(field.getType()))
+            return fieldParsers.get(field.getType());
 
-        throw new IllegalArgumentException("Class " + c.getName() + " don`t support");
+        throw new IllegalArgumentException("Class " + field.getType().getName() + " don`t support for "+field.getName());
     }
 
    /* private CSVTable getData(Object o) {

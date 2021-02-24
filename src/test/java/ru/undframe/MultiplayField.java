@@ -1,16 +1,15 @@
 package ru.undframe;
 
-import ru.undframe.field.Field;
+import ru.undframe.field.ComplexField;
+import ru.undframe.field.PrimitiveField;
 import ru.undframe.field.FieldParser;
 
-import java.util.Arrays;
-
 @FieldParser(parseClasses = MultiplayObject.class)
-public class MultiplayField implements Field<MultiplayObject> {
+public class MultiplayField implements ComplexField<MultiplayObject> {
     @Override
-    public MultiplayObject parse(String[][] s) {
+    public MultiplayObject parse(CSVObject s) {
         MultiplayObject multiplayObject = new MultiplayObject(
-                s[0][0], Integer.parseInt(s[0][1])
+                s.get(0,0).getValue(), Integer.parseInt(s.get(0,1).getValue())
         );
 
         return multiplayObject;

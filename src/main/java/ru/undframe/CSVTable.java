@@ -69,6 +69,6 @@ public class CSVTable {
 
     public List<String> getColumn(int x, Position head) {
         List<String> column = data.get(x);
-        return column.subList(head.getY()-1,column.size());
+        return column.subList(head.getY(),column.size());
     }
 }

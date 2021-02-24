@@ -1,10 +1,12 @@
 package ru.undframe;
 
+import ru.undframe.field.ComplexField;
 import ru.undframe.field.Field;
+import ru.undframe.field.PrimitiveField;
 
 public class CSVColumn {
 
-    private Position head;
+    private Position position;
     private String name;
     private Field field;
     private boolean main;
@@ -15,12 +17,14 @@ public class CSVColumn {
     private CSVTable fromTable= null;
 
     public CSVColumn(String name, Field field,
-                     Position head,
+                     Position position,
                      boolean main, Object defaultValue,
                      boolean linkField,
                      boolean constantPosition) {
+
+
         this.name = name;
-        this.head = head;
+        this.position = position;
         this.field = field;
         this.main = main;
         this.defaultValue = defaultValue;
@@ -33,8 +37,8 @@ public class CSVColumn {
         return constantPosition;
     }
 
-    public Position getHead() {
-        return head;
+    public Position getPosition() {
+        return position;
     }
 
     public String getName() {
@@ -54,7 +58,7 @@ public class CSVColumn {
     }
 
     public int getUsageColumn() {
-        return head.getDeltaX()+1;
+        return position.getDeltaX()+1;
     }
 
     public boolean isMain() {
@@ -72,9 +76,19 @@ public class CSVColumn {
     @Override
     public String toString() {
         return "CSVColumn{" +
-                "head=" + head +
+                "position=" + position +
                 ", name='" + name + '\'' +
                 '}';
     }
 
+    public Object parse(CSVObject csvObject) {
+
+        if(field instanceof PrimitiveField)
+            return ((PrimitiveField) field).parse(csvObject.getFirts().getValue());
+        else if(field instanceof ComplexField){
+            return  ((ComplexField) field).parse(csvObject);
+        }
+
+        throw new IllegalArgumentException("field " + field.getClass().getName() + " don`t parse " + csvObject.toString());
+    }
 }

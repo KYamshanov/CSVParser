@@ -3,7 +3,6 @@ package ru.undframe;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -56,7 +55,7 @@ public class Table<T> {
                 CSVTable fromTable = csvColumn.getFromTable() == null ? data : csvColumn.getFromTable();
 
 
-                List<String> column = fromTable.getColumn(csvColumn.getHead().getX(), csvColumn.getHead());
+                List<String> column = fromTable.getColumn(csvColumn.getPosition().getX(), csvColumn.getPosition());
 
 
                 int columnItems;
@@ -74,41 +73,25 @@ public class Table<T> {
             for (int id = 0; id < countObjects; id++) {
                 T t = instanceClass.newInstance();
                 for (CSVColumn csvColumn : list) {
-
                     CSVTable fromTable = csvColumn.getFromTable() == null ? data : csvColumn.getFromTable();
 
 
-                    List<String> dataValues = new ArrayList<>();
-
-                    for (int x = 0; x < csvColumn.getUsageColumn(); x++) {
-
-
-                        Position coordinate = csvColumn.isConstantPosition() ? csvColumn.getHead().clone() :
-                                csvColumn.getHead().clone().add(x, id);
-                        String value = fromTable.getValue(coordinate);
-                        if (!value.isEmpty())
-                            dataValues.add(value);
-                    }
-
-
-                    Object result = null;
-
-
-                    if (dataValues.size() == 0)
+                    Position position = csvColumn.getPosition();
+                    if (!csvColumn.isConstantPosition())
+                        position = position.addRelatively(0, id);
+                    CSVObject csvObject = new CSVObject(fromTable, position);
+                    Object result;
+                    if (csvObject.isEmpty())
                         result = csvColumn.getDefaultValue();
                     else {
                         if (!csvColumn.isLinkField()) {
-                            result = csvColumn.getField().parse(new String[][]{dataValues.toArray(new String[]{})});
+                            result = csvColumn.parse(csvObject);
                         } else {
-                            Position coordinate = Position.of(dataValues.get(0));
-
-
-                            CSVObject csvObject = new CSVObject(getData(), coordinate);
-                            result = csvColumn.getField().parse(csvObject.getValues());
-
+                            Position coordinate = Position.of(csvObject.getFirts().getValue());
+                            CSVObject csvObjectByLink = new CSVObject(getData(), coordinate);
+                            result = csvColumn.parse(csvObjectByLink);
                         }
                     }
-
                     Field f = t.getClass().getDeclaredField(csvColumn.getName());
                     f.setAccessible(true);
                     f.set(t, result);

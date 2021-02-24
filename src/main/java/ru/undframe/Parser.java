@@ -1,5 +1,7 @@
 package ru.undframe;
 
+import ru.undframe.field.PrimitiveField;
+
 import java.io.IOException;
 
 public interface Parser {
@@ -9,5 +11,5 @@ public interface Parser {
 
     <T> Table<T> getCSVObject(Class<T> c);
 
-    void registerParser(Class c, ru.undframe.field.Field field);
+    void registerParser(Class c, PrimitiveField field);
 }

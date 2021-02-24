@@ -52,10 +52,15 @@ public class Diapason implements Position{
         String[][] values = new String[getDeltaY() + 1][getDeltaX() + 1];
         for (int x = xMin,xV = 0; x <= xMax; x++,xV++) {
             for (int y = yMin,yV=0; y <= yMax; y++,yV++) {
-                values[yV][xV] = table.getValue(x, y - 1);
+                values[yV][xV] = table.getValue(x, y);
             }
         }
         return values;
+    }
+
+    @Override
+    public Position addRelatively(int x, int y) {
+        return new Diapason(this.xMin+x,this.xMax+x,this.yMin+y,this.yMax+y);
     }
 
     @Override

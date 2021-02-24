@@ -14,16 +14,6 @@ public class Coordinate implements Position {
     }
 
     @Override
-    public int getYMax() {
-        return y;
-    }
-
-    @Override
-    public int getXMax() {
-        return x;
-    }
-
-    @Override
     public Position clone() {
         return new Coordinate(x, y);
     }
@@ -40,8 +30,13 @@ public class Coordinate implements Position {
     @Override
     public String[][] getValuesFromTable(CSVTable table) {
         return new String[][]{new String[]{
-                table.getValue(getX(), getY()-1)
+                table.getValue(getX(), getY())
         }};
+    }
+
+    @Override
+    public Position addRelatively(int x, int y) {
+        return new Coordinate(this.x+x,this.y+y);
     }
 
     public int getY() {
@@ -56,5 +51,13 @@ public class Coordinate implements Position {
     @Override
     public int getDeltaY() {
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Coordinate{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

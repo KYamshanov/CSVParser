@@ -1,10 +1,10 @@
 package ru.undframe.field;
 
 @FieldParser(parseClasses = {Float.class,float.class})
-public class FloatField implements Field<Float> {
+public class FloatField implements PrimitiveField<Float> {
 
     @Override
-    public Float parse(String[][] s) {
-        return Float.parseFloat(s[0][0]);
+    public Float parse(String s) {
+        return Float.parseFloat(s);
     }
 }
