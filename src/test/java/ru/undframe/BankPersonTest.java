@@ -35,7 +35,7 @@ public class BankPersonTest {
     }
 
 
-    private static CSVTable<BankPersonTest> csvObject;
+    private static Table<BankPersonTest> csvObject;
     public static BankPersonTest[] values() {
         loadCSVObject();
 

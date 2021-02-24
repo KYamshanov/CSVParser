@@ -1,6 +1,6 @@
 package ru.undframe.csvreader;
 
-import ru.undframe.ArrayTable;
+import ru.undframe.CSVTable;
 import ru.undframe.CSVReader;
 import ru.undframe.DataReader;
 
@@ -13,7 +13,7 @@ import java.util.Scanner;
 @CSVReader(supportClasses = String.class)
 public class UrlCSVReader implements DataReader<String> {
     @Override
-    public ArrayTable read(String string) throws IOException {
+    public CSVTable read(String string) throws IOException {
         System.out.println("Download " + string);
 
         URL url = new URL(string);
@@ -27,6 +27,6 @@ public class UrlCSVReader implements DataReader<String> {
 
         s.close();
 
-        return new ArrayTable(lines, ",");
+        return new CSVTable(lines, ",");
     }
 }

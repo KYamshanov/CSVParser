@@ -6,13 +6,12 @@ import ru.undframe.field.FieldParser;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class CSVParser implements Parser {
 
-    private Map<Class, CSVTable> csvObjects = new HashMap<>();
-    private Map<Object, ArrayTable> csvTables = new HashMap<>();
+    private Map<Class, Table> csvObjects = new HashMap<>();
+    private Map<Object, CSVTable> csvTables = new HashMap<>();
     private Map<Class, ru.undframe.field.Field> fieldParsers = new HashMap<>();
     private Map<Class, DataReader> csvReaders = new HashMap<>();
 
@@ -69,7 +68,7 @@ public class CSVParser implements Parser {
             for (Class<?> aClass : typesAnnotatedWith) {
                 for (Annotation declaredAnnotation : aClass.getDeclaredAnnotations()) {
                     if (declaredAnnotation instanceof CSVData) {
-                        CSVTable csvObject = instanceCSVObject(aClass);
+                        Table csvObject = instanceCSVObject(aClass);
                         registerCSV(aClass, csvObject);
                     }
                 }
@@ -85,7 +84,7 @@ public class CSVParser implements Parser {
         return parser;
     }
 
-    void registerCSV(Class c, CSVTable csv) {
+    void registerCSV(Class c, Table csv) {
         csvObjects.put(c, csv);
     }
 
@@ -97,7 +96,7 @@ public class CSVParser implements Parser {
         csvTables.clear();
 
 
-        for (CSVTable csv : csvObjects.values()) {
+        for (Table csv : csvObjects.values()) {
             csv.refreshData();
         }
     }
@@ -107,12 +106,12 @@ public class CSVParser implements Parser {
     }
 
     @Override
-    public CSVTable getCSVObject(Class c) {
+    public Table getCSVObject(Class c) {
         return csvObjects.get(c);
     }
 
-    private CSVTable instanceCSVObject(Class aClass) throws IllegalAccessException, InstantiationException, IOException {
-        CSVTable csvObject = null;
+    private Table instanceCSVObject(Class aClass) throws IllegalAccessException, InstantiationException, IOException {
+        Table csvObject = null;
 
         Object instanceClass = aClass.newInstance();
 
@@ -141,7 +140,7 @@ public class CSVParser implements Parser {
 
                             DataLoader dataLoader = field.getAnnotation(DataLoader.class);
                             if (dataLoader != null) {
-                                CSVTable fromCSV = csvObjects.getOrDefault(dataLoader.fromCSV(), null);
+                                Table fromCSV = csvObjects.getOrDefault(dataLoader.fromCSV(), null);
 
 
 
@@ -177,7 +176,7 @@ public class CSVParser implements Parser {
                     dataReader = csvReaders.getOrDefault(csvGetter.getClass(), null);
                 }
 
-                csvObject = new CSVTable(csvGetter,
+                csvObject = new Table(csvGetter,
                         dataReader,
                         csvColumns, aClass);
             }
@@ -198,7 +197,7 @@ public class CSVParser implements Parser {
         throw new IllegalArgumentException("Class " + c.getName() + " don`t support");
     }
 
-   /* private ArrayTable getData(Object o) {
+   /* private CSVTable getData(Object o) {
         return csvTables.computeIfAbsent(o, u -> {
             try {
                 return getReaderCSV(o.getClass()).read(u);

@@ -4,6 +4,6 @@ import java.io.IOException;
 
 public interface DataReader<T> {
 
-    ArrayTable read(T t) throws IOException;
+    CSVTable read(T t) throws IOException;
 
 }

@@ -16,7 +16,7 @@ public class CSVParserTest {
         } catch (IllegalAccessException | InstantiationException | IOException e) {
             e.printStackTrace();
         }
-        CSVTable<TestTable> csvObject = parser.getCSVObject(TestTable.class);
+        Table<TestTable> csvObject = parser.getCSVObject(TestTable.class);
         assertEquals(csvObject.getObjects().get(0), new TestTable("a0", "b0", 1,new MultiplayObject("vasya",500),"A",90,new Matrix("heath","age",90,15),56));
         assertNotEquals(csvObject.getObjects().get(0), new TestTable("a0youlox", "b0", 1,new MultiplayObject("vasya",100),"A",90,new Matrix("heath","age",90,15),56));
         assertEquals(csvObject.getObjects().get(1), new TestTable("a1", "b1", -1,new MultiplayObject("igron",1500),"B",95,new Matrix("heath","age",90,15),56));
@@ -32,7 +32,7 @@ public class CSVParserTest {
         } catch (IllegalAccessException | InstantiationException | IOException e) {
             e.printStackTrace();
         }
-        CSVTable<TestTable3> csvObject = parser.getCSVObject(TestTable3.class);
+        Table<TestTable3> csvObject = parser.getCSVObject(TestTable3.class);
 
         System.out.println(csvObject.getData());
 

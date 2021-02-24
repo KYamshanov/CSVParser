@@ -2,7 +2,7 @@ package ru.undframe;
 
 public class Coordinate implements Position {
 
-    private int x,y;
+    private int x, y;
 
     public Coordinate(int x, int y) {
         this.x = x;
@@ -25,7 +25,7 @@ public class Coordinate implements Position {
 
     @Override
     public Position clone() {
-        return new Coordinate(x,y);
+        return new Coordinate(x, y);
     }
 
     @Override
@@ -35,6 +35,13 @@ public class Coordinate implements Position {
         this.y += y;
 
         return this;
+    }
+
+    @Override
+    public String[][] getValuesFromTable(CSVTable table) {
+        return new String[][]{new String[]{
+                table.getValue(getX(), getY()-1)
+        }};
     }
 
     public int getY() {

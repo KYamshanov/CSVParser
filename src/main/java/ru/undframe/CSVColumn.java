@@ -12,7 +12,7 @@ public class CSVColumn {
     private boolean linkField;
     private boolean constantPosition;
 
-    private ArrayTable fromTable= null;
+    private CSVTable fromTable= null;
 
     public CSVColumn(String name, Field field,
                      Position head,
@@ -45,11 +45,11 @@ public class CSVColumn {
         return field;
     }
 
-    public ArrayTable getFromTable() {
+    public CSVTable getFromTable() {
         return fromTable;
     }
 
-    public void setFromTable(ArrayTable fromTable) {
+    public void setFromTable(CSVTable fromTable) {
         this.fromTable = fromTable;
     }
 

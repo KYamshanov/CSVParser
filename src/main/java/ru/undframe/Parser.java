@@ -7,7 +7,7 @@ public interface Parser {
 
     void refreshCSVs() throws IOException;
 
-    <T> CSVTable<T> getCSVObject(Class<T> c);
+    <T> Table<T> getCSVObject(Class<T> c);
 
     void registerParser(Class c, ru.undframe.field.Field field);
 }

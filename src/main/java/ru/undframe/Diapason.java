@@ -39,16 +39,23 @@ public class Diapason implements Position{
         return yMax;
     }
 
-    public boolean isCoorpinatePlane(){
-        return xMax != xMin || yMin != yMax;
-    }
-
 
     public Diapason add(int x, int y) {
         this.xMin += x;
         this.yMin += y;
 
         return this;
+    }
+
+    @Override
+    public String[][] getValuesFromTable(CSVTable table) {
+        String[][] values = new String[getDeltaY() + 1][getDeltaX() + 1];
+        for (int x = xMin,xV = 0; x <= xMax; x++,xV++) {
+            for (int y = yMin,yV=0; y <= yMax; y++,yV++) {
+                values[yV][xV] = table.getValue(x, y - 1);
+            }
+        }
+        return values;
     }
 
     @Override

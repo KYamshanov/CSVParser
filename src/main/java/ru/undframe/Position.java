@@ -50,11 +50,10 @@ public interface Position {
 
     int getX();
 
-    int getYMax();
-
-    int getXMax();
 
     Position clone();
 
     Position add(int x, int y);
+
+    String[][] getValuesFromTable(CSVTable table);
 }
