@@ -27,6 +27,6 @@ public class UrlCSVReader implements DataReader<String> {
 
         s.close();
 
-        return new CSVTable(lines, ",");
+        return new CSVTable(lines, ',');
     }
 }

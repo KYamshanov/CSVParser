@@ -26,6 +26,6 @@ public class FileCSVReader implements DataReader<String> {
 
         s.close();
 
-        return new CSVTable(lines, ",");
+        return new CSVTable(lines, ',');
     }
 }

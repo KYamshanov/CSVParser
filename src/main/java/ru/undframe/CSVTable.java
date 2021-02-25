@@ -7,9 +7,9 @@ import java.util.List;
 public class CSVTable {
 
     private List<List<String>> data;
-    private String separator;
+    private char separator;
 
-    public CSVTable(List<String> lines, String separator) {
+    public CSVTable(List<String> lines, char separator) {
 
         this.separator = separator;
 
@@ -18,7 +18,7 @@ public class CSVTable {
 
         for (String line : lines) {
             xyObjects.add(Arrays.asList(
-                    line.split(separator)));
+                    separateLine(line,separator)));
         }
 
         int maxLengthColumn = 0;
@@ -71,4 +71,45 @@ public class CSVTable {
         List<String> column = data.get(x);
         return column.subList(head.getY(),column.size());
     }
+
+
+    public String[] separateLine(String line, char separateChar) {
+
+        List<String> words = new ArrayList<>();
+
+        char[] charArray = line.toCharArray();
+
+        int beginIndex = 0;
+
+        boolean stringMode = false;
+
+        for (int index = 0; index < charArray.length; index++) {
+
+            char symbol = charArray[index];
+
+            if(symbol=='\"'){
+                stringMode = !stringMode;
+            }
+
+
+            if(!stringMode)
+                if (symbol == separateChar) {
+
+                    if (beginIndex == index) {
+                        words.add("");
+                    } else {
+                        words.add(line.substring(beginIndex, index));
+                    }
+                    beginIndex = index + 1;
+                }
+
+        }
+
+        words.add(line.substring(beginIndex, charArray.length));
+
+        return words.toArray(new String[]{});
+
+    }
+
+
 }

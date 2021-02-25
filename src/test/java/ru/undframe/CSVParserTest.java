@@ -3,8 +3,11 @@ package ru.undframe;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class CSVParserTest {
 
@@ -17,40 +20,15 @@ public class CSVParserTest {
             e.printStackTrace();
         }
         Table<TestTable> csvObject = parser.getCSVObject(TestTable.class);
-        assertEquals(csvObject.getObjects().get(0), new TestTable("a0", "b0", 1,new MultiplayObject("vasya",500),"A",90,new Matrix("heath","age",90,15),56));
-        assertNotEquals(csvObject.getObjects().get(0), new TestTable("a0youlox", "b0", 1,new MultiplayObject("vasya",100),"A",90,new Matrix("heath","age",90,15),56));
-        assertEquals(csvObject.getObjects().get(1), new TestTable("a1", "b1", -1,new MultiplayObject("igron",1500),"B",95,new Matrix("heath","age",90,15),56));
-        assertEquals(csvObject.getObjects().size(), 21,95);
+        assertEquals(csvObject.getObjects().get(0), new TestTable("a0", "b0", 1, new MultiplayObject("vasya", 500), "A", 90, new Matrix("heath", "age", 90, 15), 56));
+        assertNotEquals(csvObject.getObjects().get(0), new TestTable("a0youlox", "b0", 1, new MultiplayObject("vasya", 100), "A", 90, new Matrix("heath", "age", 90, 15), 56));
+        assertEquals(csvObject.getObjects().get(1), new TestTable("a1", "b1", -1, new MultiplayObject("igron", 1500), "B", 95, new Matrix("heath", "age", 90, 15), 56));
+        assertEquals(csvObject.getObjects().size(), 21, 95);
     }
 
 
     @Test
-    public void testFileTable(){
-        Parser parser = CSVParser.getInstance();
-        try {
-            parser.launch("ru.undframe");
-        } catch (IllegalAccessException | InstantiationException | IOException e) {
-            e.printStackTrace();
-        }
-        Table<TestTable3> csvObject = parser.getCSVObject(TestTable3.class);
-
-        System.out.println(csvObject.getData());
-
-
-        for (TestTable3 object : csvObject.getObjects()) {
-
-
-
-            System.out.println(object.getName()+" "+object.getRemainder());
-
-        }
-
-
-
-    }
-
-    @Test
-    public void testCustomEnum(){
+    public void testCustomEnum() {
 
         Parser parser = CSVParser.getInstance();
         try {
@@ -59,12 +37,12 @@ public class CSVParserTest {
             e.printStackTrace();
         }
 
-        testSpeed("Custom",() -> {
+        testSpeed("Custom", () -> {
             for (BankPersonTest value : BankPersonTest.values()) {
                 System.out.println(value);
             }
         });
-        testSpeed("Default",() -> {
+        testSpeed("Default", () -> {
             for (BanPersonEnum value : BanPersonEnum.values()) {
                 System.out.println(value);
             }
@@ -73,13 +51,15 @@ public class CSVParserTest {
     }
 
 
-    public static void testSpeed(String mrk,Runnable runnable){
+    public static void testSpeed(String mrk, Runnable runnable) {
         long start = System.nanoTime();
         runnable.run();
         long stop = System.nanoTime();
 
-        System.out.println("["+mrk+ "] ACTION execute with "+ (stop-start));
+        System.out.println("[" + mrk + "] ACTION execute with " + (stop - start));
 
     }
+
+
 
 }

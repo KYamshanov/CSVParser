@@ -82,7 +82,6 @@ public class CSVColumn {
     }
 
     public Object parse(CSVObject csvObject) {
-
         if(field instanceof PrimitiveField)
             return ((PrimitiveField) field).parse(csvObject.getFirts().getValue());
         else if(field instanceof ComplexField){
