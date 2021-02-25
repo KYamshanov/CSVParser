@@ -60,6 +60,68 @@ public class CSVParserTest {
 
     }
 
+    @Test
+    public void testSeparate(){
+
+        String s = "a,b,,,\",\"\"\"";
+
+
+        for (String s1 : separateLine(s, ',')) {
+            System.out.println("["+s1+"]");
+        }
+
+    }
+
+    public String[] separateLine(String line, char separateChar) {
+
+        List<String> words = new ArrayList<>();
+
+        char[] charArray = line.toCharArray();
+
+        int beginIndex = 0;
+
+        boolean stringMode = false;
+
+        for (int index = 0; index < charArray.length; index++) {
+
+            char symbol = charArray[index];
+
+            if(symbol=='\"'){
+                if(stringMode){
+                    if((index+1)<charArray.length &&  charArray[index+1]=='\"'){
+                        index++;
+                        continue;
+                    }
+                }
+                stringMode = !stringMode;
+            }
+
+
+            if(!stringMode)
+                if (symbol == separateChar) {
+
+                    if (beginIndex == index) {
+                        words.add("");
+                    } else {
+                        String substring = line.substring(beginIndex, index);
+                        words.add(substring);
+                    }
+                    beginIndex = index + 1;
+                }
+
+        }
+
+        String substring = line.substring(beginIndex, charArray.length);
+        if(substring.startsWith("\""))
+            substring = substring.substring(1, substring.length() - 1);
+
+        substring = substring.replaceAll("\"\"", "\"");
+
+        words.add(substring);
+
+        return words.toArray(new String[]{});
+
+    }
 
 
 }
