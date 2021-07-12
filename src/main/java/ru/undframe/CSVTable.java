@@ -105,7 +105,11 @@ public class CSVTable {
 
         }
 
-        words.add(line.substring(beginIndex, charArray.length));
+        String substring = line.substring(beginIndex, charArray.length);
+        if(substring.startsWith("\"") && substring.endsWith("\""))
+            substring = substring.substring(1, substring.length() - 1);
+        substring = substring.replaceAll("\"\"", "\"");
+        words.add(substring);
 
         return words.toArray(new String[]{});
 

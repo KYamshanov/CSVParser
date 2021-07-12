@@ -126,7 +126,7 @@ public class CSVParser implements Parser {
                         if (annotation instanceof Column) {
                             Column column = (Column) annotation;
                             Parsable parsable = field.getAnnotation(Parsable.class);
-                            Position head = Position.of(column.head());
+                            Position head = Position.of(null,column.head());
                             field.setAccessible(true);
                             Object defaultValue = field.get(instanceClass);
                             field.setAccessible(false);

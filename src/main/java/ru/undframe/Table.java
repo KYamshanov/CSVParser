@@ -87,7 +87,7 @@ public class Table<T> {
                         if (!csvColumn.isLinkField()) {
                             result = csvColumn.parse(csvObject);
                         } else {
-                            Position coordinate = Position.of(csvObject.getFirts().getValue());
+                            Position coordinate = Position.of(position,csvObject.getFirts().getValue());
                             CSVObject csvObjectByLink = new CSVObject(getData(), coordinate);
                             result = csvColumn.parse(csvObjectByLink);
                         }

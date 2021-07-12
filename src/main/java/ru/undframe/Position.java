@@ -3,20 +3,20 @@ package ru.undframe;
 public interface Position {
 
 
-    static Position of(String coordinate) {
+    static Position of(Position baseCoordinate, String coordinate) {
         String[] split = coordinate.split(":");
 
-        if(split.length==2){
-            Coordinate minCoordinate = getCoordinateWithName(split[0]);
-            Coordinate maxCoordinate = getCoordinateWithName(split[1]);
+        if (split.length == 2) {
+            Coordinate minCoordinate = getCoordinateWithName(baseCoordinate, split[0]);
+            Coordinate maxCoordinate = getCoordinateWithName(baseCoordinate, split[1]);
             Diapason diapason = new Diapason(minCoordinate.getX(), maxCoordinate.getX(), minCoordinate.getY(), maxCoordinate.getY());
             return diapason;
         }
 
-        return getCoordinateWithName(coordinate);
+        return getCoordinateWithName(baseCoordinate, coordinate);
     }
 
-    static Coordinate getCoordinateWithName(String columnName) {
+    static Coordinate getCoordinateWithName(Position baseCoordinate, String columnName) {
         int x = 0;
         int y;
         int skipCharacters = 0;
@@ -37,8 +37,13 @@ public interface Position {
 
         if (x < 0)
             throw new IllegalArgumentException();
-        y = Integer.parseInt(columnName.substring(skipCharacters));
-        return new Coordinate(x, y-1);
+
+        String yValue = columnName.substring(skipCharacters);
+        if (baseCoordinate!=null && yValue.equals("$"))
+            y = baseCoordinate.getY();
+        else
+            y = Integer.parseInt(yValue);
+        return new Coordinate(x, y - 1);
     }
 
 
